@@ -1,19 +1,26 @@
 # Calculate next prim of 23
+# eax = prim
+# ebx = div
+# ecx = counter
 .data
-	str: .string "Next prim of 23: 20^4: %d \n"
-	a: .long 20 
+	str: .string "Next prim of 23: %d \n"
+	a: .long 23
 .globl main
-loop:
-	imull %ecx, %eax
-	incl %ebx 
-	cmpl $4, %ebx
-	jl loop
-	jmp print
 main:
-	movl a, %eax
-	movl %eax, %ecx
-	movl $0, %ebx
-	jmp loop
+	movl a, %eax	# ebx = a 
+	incl %eax	
+outer_loop:
+	movl $2, %ecx 	# ecx = 2
+inner_loop:
+	cltd		# convert long to double (edx:eax)
+	divl %ebx	# eax / ebx	
+	# teiler eax, rest edx (immer) parameter:eax / x 
+	cmpl $0, %ebx
+	je if
+	#else
+	incl %ecx
+	cmpl %ecx, %eax
+	jmp print
 print:
 	pushl %eax
 	pushl $str
