@@ -7,8 +7,8 @@
     sy: .long 0
     err: .long 0
     x: .long 0
-    y .long 0
-    e2 .long 0
+    y: .long 0
+    e2: .long 0
 
 .text
 draw_line:
@@ -28,7 +28,7 @@ draw_line:
     movl x1, %ebx
     subl %eax, %ebx
     cmpl $0, %ebx
-    jg no_neg
+    jge no_neg
     negl %ebx
 no_neg:
     movl %ebx, dx
@@ -46,11 +46,11 @@ c1:
      movl y0, %eax
      movl y1, %ebx
      subl %eax, %ebx
-     cmpl cmpl $0, %ebx
-     jg $0 make_neg
+     cmpl $0, %ebx
+     jge make_neg
      jmp c2
 make_neg:
-    imull $-1, %ebx
+    negl %ebx
 c2:
     movl %ebx, dy
 # sy #
@@ -69,8 +69,10 @@ c3:
     addl %eax, %ebx
     movl %ebx, err
 # x & y #
-    movl x0, x
-    movl y1, y
+    movl x0, %eax
+    movl %eax, x
+    movl y0, %ebx
+    movl %ebx, y
 # while #
 while:
     # setpixel (x, y)
@@ -78,7 +80,7 @@ while:
     imull width, %eax
     addl x, %eax
     movb $255, buf(%eax) 
-    # if x == x1 && y == y1 #
+    # (x == x1 && y == y1) #
     movl x1, %eax
     movl x, %ebx
     cmpl %eax, %ebx
@@ -92,14 +94,14 @@ c4:
     movl err, %eax
     imull $2, %eax
     movl %eax, e2
-    # if (e2 > dy) #
+    # (e2 > dy) #
     movl e2, %eax
     movl dy, %ebx
     cmpl %eax, %ebx
     jl e2greater
     jmp c5
 e2greater:
-   movl err %eax
+   movl err, %eax
    movl dy, %ebx
    addl %eax, %ebx
    movl %ebx, err
@@ -108,7 +110,7 @@ e2greater:
    addl %eax, %ebx
    movl %ebx, x
 c5:
-    #e2 < dx #
+    # (e2 < dx) #
     movl e2, %eax
     movl dx, %ebx
     cmpl %eax, %ebx
