@@ -43,15 +43,13 @@ x1greater:
 c1:
     movl $-1, sx
 # dy #
-     movl y0, %eax
-     movl y1, %ebx
-     subl %eax, %ebx
-     cmpl $0, %ebx
-     jge make_neg
-     jmp c2
-make_neg:
+    movl y0, %eax
+    movl y1, %ebx
+    subl %eax, %ebx
+    cmpl $0, %ebx
+    jl is_neg
     negl %ebx
-c2:
+is_neg:
     movl %ebx, dy
 # sy #
     movl y0, %eax
