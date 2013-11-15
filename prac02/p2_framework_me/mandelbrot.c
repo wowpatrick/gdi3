@@ -6,6 +6,8 @@
  */
 #include "mandelbrot.h"
 
+
+#include "math.h"
 /*
  * Calculates a color mapping for a given iteration number by exploiting the
  * YUV color space. Returns the color as 8-bit unsigned char per channel (RGB).
@@ -20,10 +22,29 @@
 void
 colorMapYUV(int index, int maxIterations, unsigned char* color)
 {
+
+    printf("Index is: %d \n", index);
+
+	double y = 0.2;
+	double u = -1 + 2 * (index/maxIterations);
+	double v = 0.5 - (index/maxIterations);
+	
+
+
+	double r = (y + (1.28033 * v));
+	double g = (y + (-0.21482 * u) + (-0.38059 * v));	
+	double b = (y + (2.12798 * u));
+
     // TODO Insert your implementation here.
-    color[0] = 0;
-    color[1] = 0;
-    color[2] = 0;
+
+
+    color[0] = (int) round(r);
+    color[1] = (int) round(g);
+    color[2] = (int) round(b);
+
+    printf("Colour: R %f, G %f, B %f ", round(r), round(g), round(b));
+
+	//printf ("rgb =  %f , %f , %f \n", r, g , b);
 }
 
 /*
@@ -44,7 +65,20 @@ int
 testEscapeSeriesForPoint(complex float c, int maxIterations, complex float * last)
 {
     // TODO Insert your implementation here.
-    return -1;
+
+	float _Complex z = 0 + 0 * _Complex_I;
+	int iteration = 0;
+	while (cabs(z) <= RADIUS && iteration < maxIterations){
+		z = z*z + c;
+		iteration ++; 
+	}
+	if (iteration < maxIterations){
+		double mu = log ( log ( cabs(z)) / log(2)) / log(2);
+		iteration = iteration + 1 - mu;
+	}
+
+
+    return iteration;
 }
 
 /*
@@ -60,14 +94,23 @@ generateMandelbrot(
 {
     // Allocate image buffer, row-major order, 3 channels.
     unsigned char *image = malloc(height * width * 3);
-
+	double scale = 2 * RADIUS/ fmin(width, height);
+	printf("scale: %f", scale);
     // TODO: Generate and color map the image.
     for(int y = 0; y < height; y++) {
+		double im_teil = (height / 2 - y) * scale ;
         for(int x = 0; x < width; x++) {
             // TODO: Call testEscapeSeriesForPoint() here.
+		double rl_teil = (x - width / 2) * scale;
+		
+		float _Complex value = rl_teil + im_teil * _Complex_I;
+		
+		int iteration_needed = testEscapeSeriesForPoint(value, maxIterations, &value); 
+
+
             // TODO: Color map the result.
             int offset = (y * width + x) * 3;
-            colorMapYUV(-1, maxIterations, image + offset);
+            colorMapYUV(iteration_needed, maxIterations, image + offset);
         }
     }
 
