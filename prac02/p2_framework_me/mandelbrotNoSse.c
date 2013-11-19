@@ -6,12 +6,8 @@
  */
 #include "mandelbrot.h"
 
-#include <xmmintrin.h> // SSE 1
-#include <emmintrin.h> // SSE 2
-#include <pmmintrin.h> // SSE 3
 
 #include "math.h"
-#include "stdio.h"
 /*
  * Calculates a color mapping for a given iteration number by exploiting the
  * YUV color space. Returns the color as 8-bit unsigned char per channel (RGB).
