@@ -5,7 +5,7 @@
  * the color mapping, you may want to process multiple pixels at once.
  */
 #include "mandelbrot.h"
-
+#include "stdio.h"
 
 #include "math.h"
 /*
@@ -20,20 +20,24 @@
  *	The associated color as an array of 3 8-bit unsigned char values.
  */
 void
-colorMapYUV(float index, int maxIterations, unsigned char* color)
+colorMapYUV(int index, int maxIterations, unsigned char* color)
 {
-    // Ausgabe mandelbrotmange (ohne umrechnung der farbwerte)
+    
+    // Define the mandelbrot set to as black colour
     if(index == maxIterations) {
         color[0] = 0;
         color[1] = 0;
         color[2] = 0;
     }
     else {
+        // Convert the index to a float for conversion calculation
+        float indexf = (float) index;
+        
         // Index in range 0-100
         // Given conversion code (index -> YUV)
         double y = 0.2;                                // 0.2 - brightness of the image, black-and-white    
-        double u = -1 + 2 * (index/maxIterations);     // -1+2*(50/100) = 0 - chroma, blue-luma 
-        double v = 0.5 - (index/maxIterations);        // 0.5-(50/100) = 0 - chrome, red-luma
+        double u = -1 + 2 * (indexf/maxIterations);     // -1+2*(50/100) = 0 - chroma, blue-luma
+        double v = 0.5 - (indexf/maxIterations);        // 0.5-(50/100) = 0 - chrome, red-luma
 
         // Conversion according to wikipedia
         double r = (y + (1.28033 * v));

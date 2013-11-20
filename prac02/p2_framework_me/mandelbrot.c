@@ -6,10 +6,9 @@
  */
 #include "mandelbrot.h"
 
-#include <xmmintrin.h> // SSE 1
-#include <emmintrin.h> // SSE 2
-#include <pmmintrin.h> // SSE 3
-
+#include "xmmintrin.h"  // SSE 1
+#include "emmintrin.h"  // SSE 2
+#include "pmmintrin.h"  // SSE 3
 #include "math.h"
 #include "stdio.h"
 /*
@@ -35,24 +34,32 @@ colorMapYUV(float index, int maxIterations, unsigned char* color)
     else {
         // Index in range 0-100
         // Given conversion code (index -> YUV)
-        double y = 0.2;                                // 0.2 - brightness of the image, black-and-white    
-        double u = -1 + 2 * (index/maxIterations);     // -1+2*(50/100) = 0 - chroma, blue-luma 
-        double v = 0.5 - (index/maxIterations);        // 0.5-(50/100) = 0 - chrome, red-luma
+        double y = 0.2;                                // brightness of the image, black-and-white
+        double u = -1 + 2 * (index/maxIterations);     // chroma, blue-luma
+        double v = 0.5 - (index/maxIterations);        // chrome, red-luma
 
         // Conversion according to wikipedia
         double r = (y + (1.28033 * v));
         double g = (y + (-0.21482 * u) + (-0.38059 * v));	
         double b = (y + (2.12798 * u));
-
+        
+        // Data alignment
+        // float *pRes = (float*) _aligned_malloc(255 * sizeof(float), 16); // _aligned_malloc() is MSVC exclusive http://msdn.microsoft.com/en-us/library/8z34s9c6%28VS.80%29.aspx
+        float *pRes = (float*) *aligned_alloc(255 * sizeof(float), 16); // *aligned_alloc() is the C11 standard (not vendor specific) http://stackoverflow.com/questions/3839922/aligned-malloc-in-gcc
+        
+        __m128 *pResSSE = (__m128*) pRes;
+        
         // value alignment
-        r=r*255;
-        g=g*255;
-        b=b*255;
+        __m128 vec1, vec2, res;
+        
+        vec1 = _mm_set_ps(255.0f,255.0f,255.0f,255.0f);
+        vec2 = _mm_set_ps(r, g, b, 0.0f);
+        res = _mm_mul_ps(vec1,vec2);
 
         // set type for correct value representation
-        color[0] = (unsigned char) r;
-        color[1] = (unsigned char) g;
-        color[2] = (unsigned char) b;
+        color[0] = (unsigned char) res[3];
+        color[1] = (unsigned char) res[2];
+        color[2] = (unsigned char) res[1];
     }
 }
 
