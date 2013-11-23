@@ -32,11 +32,31 @@ colorMapYUV(float index, int maxIterations, unsigned char* color)
         color[2] = 0;
     }
     else {
-        // Index in range 0-100
+
+        // Set the value (because we need it two times)
+        float indexByMax = index/maxIterations;
+
         // Given conversion code (index -> YUV)
         double y = 0.2;                                // brightness of the image, black-and-white
-        double u = -1 + 2 * (index/maxIterations);     // chroma, blue-luma
-        double v = 0.5 - (index/maxIterations);        // chrome, red-luma
+        double u = -1 + 2 * (indexByMax);     // chroma, blue-luma
+        double v = 0.5 - (indexByMax);        // chrome, red-luma
+
+        // --------------------------------------
+        __m128 iV1, iV2, iVres1, iVres2;
+
+        iV1 = _mm_set_ps(0.2f, -1.0f, 0.5f, 0.0f);
+        iV2 = _mm_set_ps(0.0f, 2.0f, 0.0f, 0.0f);
+
+        iVres1 = _mm_add_ps(iV1, iV2);
+        iVres2 = _mm_set_ps(iVres1[3], (iVres1[2]*indexByMax), (iVres1[1]-indexByMax), 0.0f);
+
+
+        if (y != iVres2[3] || u != iVres2[2] || v != iVres2[1]) {
+            printf("Normal values: %f, %f, %f \n", y, u, v);
+            printf("SSE values: %f, %f, %f \n", iVres2[3], iVres2[2], iVres2[1]);
+        }
+
+        // --------------------------------------
 
         // Conversion according to wikipedia
         double r = (y + (1.28033 * v));
@@ -45,9 +65,9 @@ colorMapYUV(float index, int maxIterations, unsigned char* color)
         
         // Data alignment
         // float *pRes = (float*) _aligned_malloc(255 * sizeof(float), 16); // _aligned_malloc() is MSVC exclusive http://msdn.microsoft.com/en-us/library/8z34s9c6%28VS.80%29.aspx
-        float *pRes = (float*) *aligned_alloc(255 * sizeof(float), 16); // *aligned_alloc() is the C11 standard (not vendor specific) http://stackoverflow.com/questions/3839922/aligned-malloc-in-gcc
+        //float *pRes = (float*) *aligned_alloc(255 * sizeof(float), 16); // *aligned_alloc() is the C11 standard (not vendor specific) http://stackoverflow.com/questions/3839922/aligned-malloc-in-gcc
         
-        __m128 *pResSSE = (__m128*) pRes;
+        //__m128 *pResSSE = (__m128*) pRes;
         
         // value alignment
         __m128 vec1, vec2, res;

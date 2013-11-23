@@ -5,9 +5,6 @@
  * the color mapping, you may want to process multiple pixels at once.
  */
 #include "mandelbrot.h"
-#include "stdio.h"
-
-#include "math.h"
 /*
  * Calculates a color mapping for a given iteration number by exploiting the
  * YUV color space. Returns the color as 8-bit unsigned char per channel (RGB).
@@ -22,38 +19,33 @@
 void
 colorMapYUV(int index, int maxIterations, unsigned char* color)
 {
-    
-    // Define the mandelbrot set to as black colour
+
+    // Ausgabe mandelbrotmange (ohne umrechnung der farbwerte)
     if(index == maxIterations) {
         color[0] = 0;
         color[1] = 0;
         color[2] = 0;
     }
     else {
-        // Convert the index to a float for conversion calculation
-        float indexf = (float) index;
-        
         // Index in range 0-100
         // Given conversion code (index -> YUV)
-        double y = 0.2;                                // 0.2 - brightness of the image, black-and-white    
-        double u = -1 + 2 * (indexf/maxIterations);     // -1+2*(50/100) = 0 - chroma, blue-luma
-        double v = 0.5 - (indexf/maxIterations);        // 0.5-(50/100) = 0 - chrome, red-luma
+        float y = 0.2;
+        float u = -1 + 2 * ((float)index/maxIterations);
+        float v = 0.5 - ((float)index/maxIterations);
 
         // Conversion according to wikipedia
-        double r = (y + (1.28033 * v));
-        double g = (y + (-0.21482 * u) + (-0.38059 * v));	
-        double b = (y + (2.12798 * u));
+	float r = 255 * (y + (1.28033 * v));
+        float g = 255 * (y + (-0.21482 * u) + (-0.38059 * v));
+        float b = 255 *(y + (2.12798 * u));
 
-        // value alignment
-        r=r*255;
-        g=g*255;
-        b=b*255;
+
+
 
         // set type for correct value representation
         color[0] = (unsigned char) r;
         color[1] = (unsigned char) g;
         color[2] = (unsigned char) b;
-    }
+	}
 }
 
 /*
@@ -71,17 +63,15 @@ colorMapYUV(int index, int maxIterations, unsigned char* color)
  *	(user-defined) value.
  */
 int
-testEscapeSeriesForPoint(complex float c, int maxIterations, complex float * last)
+testEscapeSeriesForPoint(complex float c, int maxIterations, complex float *last)
 {
-    // TODO Insert your implementation here.
-
 	int iteration = 0;
 	while (cabs(*last) <= RADIUS && iteration < maxIterations){
 		*last = (*last)*(*last) + c;
-		iteration ++; 
+		iteration ++;
 	}
 	if (iteration < maxIterations){
-		double mu = log ( log ( cabs(*last)) / log(2)) / log(2);
+		float mu = log ( log ( cabs(*last)) / log(2)) / log(2);
 		iteration = iteration + 1 - mu;
 	}
 
@@ -93,30 +83,28 @@ testEscapeSeriesForPoint(complex float c, int maxIterations, complex float * las
  */
 unsigned char *
 generateMandelbrot(
-    complex float upperLeft, 
-    complex float lowerRight, 
-    int maxIterations, 
-    int width, 
+    complex float upperLeft,
+    complex float lowerRight,
+    int maxIterations,
+    int width,
     int height)
 {
     // Allocate image buffer, row-major order, 3 channels.
     unsigned char *image = malloc(height * width * 3);
-	double scale = 2 * RADIUS/ fmin(width, height);
-	printf("scale: %f", scale);
-    // TODO: Generate and color map the image.
+	float CxMin = crealf(INITIAL_UPPERLEFT);
+	float CxMax = crealf(INITIAL_LOWERRIGHT);
+	float CyMin = cimagf(INITIAL_LOWERRIGHT);
+	float CyMax = cimagf(INITIAL_UPPERLEFT);
+
     for(int y = 0; y < height; y++) {
-		double im_teil = (height / 2 - y) * scale ;
+		float im_teil = CyMin + y * (CyMax-CyMin)/ height;
         for(int x = 0; x < width; x++) {
-            // TODO: Call testEscapeSeriesForPoint() here.
-		double rl_teil = (x - width / 2) * scale;
-		
-		float _Complex value = rl_teil + im_teil * _Complex_I;
+		float rl_teil = CxMin + x * (CxMax-CxMin)/ width;
+		float _Complex c = rl_teil + im_teil * _Complex_I;
+		float _Complex z = 0 + 0 * _Complex_I;
+		int iteration_needed =  testEscapeSeriesForPoint(c, maxIterations, &z); 
 
-        float _Complex z = 0 + 0 * _Complex_I;
-		
-		int iteration_needed = testEscapeSeriesForPoint(value, maxIterations, &z); 
 
-            // TODO: Color map the result.
             int offset = (y * width + x) * 3;
             colorMapYUV(iteration_needed, maxIterations, image + offset);
         }
