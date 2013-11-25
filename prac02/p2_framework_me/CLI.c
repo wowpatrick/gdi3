@@ -41,7 +41,7 @@ main(int argc, char *argv[])
 
     // argument parsing
     struct arguments args;
-    args.maxIterations = 10000;
+    args.maxIterations = 100;
     args.outfile = "mandelbrot.ppm";
     int c = 0;
 
