@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C1CC3228-6DA0-44F5-A2F9-C7F0709B6727</string>
+	<key>IDESourceControlProjectName</key>
+	<string>prac02-1</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>1AAC91E4-ACD6-4039-AE5C-8EFD9363D48B</key>
+		<string>https://github.com/wowpatrick/gdi3.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>prac02-1/prac02-1.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>1AAC91E4-ACD6-4039-AE5C-8EFD9363D48B</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/wowpatrick/gdi3.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>1AAC91E4-ACD6-4039-AE5C-8EFD9363D48B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1AAC91E4-ACD6-4039-AE5C-8EFD9363D48B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>gdi3</string>
+		</dict>
+	</array>
+</dict>
+</plist>
