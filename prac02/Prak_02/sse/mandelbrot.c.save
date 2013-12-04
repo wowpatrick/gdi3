@@ -1,0 +1,132 @@
+#include "mandelbrot.h"
+#include "xmmintrin.h"
+void
+colorMapYUV(float *index, int maxIterations)
+{
+
+// unsigned char* color
+// color [0] = r; color [1] = g; color [2] = b
+// color [3] = r; color [4] = g; color [5] = b
+// color [6] = r; color [7] = g; color [8] = b
+
+
+
+float maskresult [4] = {0,0,0,0};
+float* pmaskresult = maskresult;
+int *pMaxIterations = maxIterations;
+__m128 index_m128 = _mm_loadu_ps(index);
+__m128 maxIteration_m128 = _mm_load1_ps(pMaxIterations);
+
+/*
+ * index_m128 		= [index0, index1, index2, index3]
+ * maxIteration_m128 	= [100, 100, 100, 100]
+ */
+__m128 mask = _mm_cmpeq_ps(index_m128, maxIteration_m128);
+
+_mm_storeu_ps (pmaskresult,mask);
+
+
+
+for (int= 0; i < 4, i++){
+	printf ("position %d is %f\n",i,pResult[i]);
+}
+
+
+
+
+
+
+/*
+    if(index == maxIterations) {
+        color[0] = 0;
+        color[1] = 0;
+        color[2] = 0;
+    }
+    else {
+        float y = 0.2;
+        float u = -1 + 2 * ((float)index/maxIterations);
+        float v = 0.5 - ((float)index/maxIterations);
+
+	float r = 255 * (y + (1.28033 * v));
+        float g = 255 * (y + (-0.21482 * u) + (-0.38059 * v));
+        float b = 255 *(y + (2.12798 * u));
+
+        color[0] = (unsigned char) r;
+        color[1] = (unsigned char) g;
+        color[2] = (unsigned char) b;
+	}
+
+*/
+}
+
+int*
+testEscapeSeriesForPoint(complex float *c, int maxIterations, complex float *last)
+{
+	int iteration [4] = {0,0,0,0};
+/*	while (cabs(*last) <= RADIUS && iteration < maxIterations){
+		*last = (*last)*(*last) + c;
+		iteration ++; 
+	}
+	if (iteration < maxIterations){
+		float mu = log ( log ( cabs(*last)) / log(2)) / log(2);
+		iteration = iteration + 1 - mu;
+	}
+*/
+	int* pointer = iteration;
+    return pointer;
+}
+unsigned char *
+generateMandelbrot(
+    complex float upperLeft,
+    complex float lowerRight,
+    int maxIterations,
+    int width,
+    int height)
+{
+    unsigned char *image = malloc(height * width * 3);
+/*	float CxMin = crealf(INITIAL_UPPERLEFT);
+	float CxMax = crealf(INITIAL_LOWERRIGHT);
+	float CyMin = cimagf(INITIAL_LOWERRIGHT);
+	float CyMax = cimagf(INITIAL_UPPERLEFT);
+
+    for(int y = 0; y < height; y++) {
+		float im_teil = CyMin + y * (CyMax-CyMin)/ height;
+
+
+
+        for(int x = 0; x < width; x = x + 4) {
+		float rl_teil0 = CxMin + x * (CxMax-CxMin)/ width;
+		float rl_teil1 = CxMin + (x+1) * (CxMax-CxMin)/ width;
+		float rl_teil2 = CxMin + (x+2) * (CxMax-CxMin)/ width;
+		float rl_teil3 = CxMin + (x+3) * (CxMax-CxMin)/ width;
+
+		float _Complex c0 = rl_teil0 + im_teil * _Complex_I;
+		float _Complex c1 = rl_teil1 + im_teil * _Complex_I;
+		float _Complex c2 = rl_teil2 + im_teil * _Complex_I;
+		float _Complex c3 = rl_teil3 + im_teil * _Complex_I;
+		
+
+
+		float _Complex c [4] = {c0, c1, c2, c3};
+		float _Complex z = 0 + 0 * _Complex_I;
+
+		float _Complex *pointc = c;
+		int *iteration_needed =  testEscapeSeriesForPoint(pointc, maxIterations, &z); 
+
+/*
+           	int offset = (y * width + x) * 3;
+            	colorMapYUV(iteration_needed[0], maxIterations, image + offset);
+           	offset = (y * width + (x+1)) * 3;
+            	colorMapYUV(iteration_needed[1], maxIterations, image + offset);
+           	offset = (y * width + (x+2)) * 3;
+            	colorMapYUV(iteration_needed[2], maxIterations, image + offset);
+           	offset = (y * width + (x+3)) * 3;
+            	colorMapYUV(iteration_needed[3], maxIterations, image + offset);
+  
+      }
+    }
+*/
+printf("222KITAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+    return image;
+}
+
